@@ -1,12 +1,11 @@
 package io.mosip.registration.processor.stages.uigenerator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.registration.processor.packet.manager.dto.IdRequestDto;
+import io.mosip.registration.processor.stages.uingenerator.dto.VidResponseDto;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.util.Lists;
 import org.json.JSONException;
@@ -30,11 +35,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -85,6 +86,7 @@ import io.mosip.registration.processor.core.util.RegistrationExceptionMapperUtil
 import io.mosip.registration.processor.packet.manager.dto.IdResponseDTO;
 import io.mosip.registration.processor.packet.manager.dto.ResponseDTO;
 import io.mosip.registration.processor.packet.manager.exception.IdrepoDraftException;
+import io.mosip.registration.processor.packet.manager.exception.IdrepoDraftReprocessableException;
 import io.mosip.registration.processor.packet.manager.idreposervice.IdRepoService;
 import io.mosip.registration.processor.packet.manager.idreposervice.IdrepoDraftService;
 import io.mosip.registration.processor.packet.storage.dto.ApplicantInfoDto;
@@ -143,13 +145,13 @@ public class UinGeneratorStageTest {
 
 				@Override
 				public void consumerHealthCheck(Handler<HealthCheckDTO> eventHandler, String address) {
-					// TODO Auto-generated method stub
+
 
 				}
 
 				@Override
 				public void senderHealthCheck(Handler<HealthCheckDTO> eventHandler, String address) {
-					// TODO Auto-generated method stub
+
 
 				}
 
@@ -969,7 +971,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void deactivateTestSuccess() throws ApisResourceAccessException, IOException, JSONException, JsonProcessingException, PacketManagerException, IdrepoDraftException {
+	public void deactivateTestSuccess() throws ApisResourceAccessException, IOException, JSONException,
+			JsonProcessingException, PacketManagerException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
@@ -1056,7 +1059,8 @@ public class UinGeneratorStageTest {
 		assertFalse(result.getInternalError());
 	}
 	@Test
-	public void deactivateTestWithDeactivate() throws ApisResourceAccessException, IOException, JSONException, JsonProcessingException, PacketManagerException, IdrepoDraftException {
+	public void deactivateTestWithDeactivate() throws ApisResourceAccessException, IOException, JSONException,
+			JsonProcessingException, PacketManagerException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -1105,7 +1109,9 @@ public class UinGeneratorStageTest {
 	}
 			
 	@Test
-	public void deactivateTestWithNullResponseDTO() throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+	public void deactivateTestWithNullResponseDTO()
+			throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException,
+			JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -1152,7 +1158,9 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void deactivateTestForExistingUinTestSuccess() throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+	public void deactivateTestForExistingUinTestSuccess()
+			throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException,
+			JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		MessageDTO messageDTO = new MessageDTO();
 		messageDTO.setRid("10031100110005020190313110030");
 		messageDTO.setReg_type(RegistrationType.valueOf("DEACTIVATED").name());
@@ -1202,7 +1210,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void deactivateTestFailure() throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+	public void deactivateTestFailure() throws ApisResourceAccessException, PacketManagerException, IOException,
+			JsonProcessingException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
@@ -1262,7 +1271,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void apisResourceAccessExceptionTest() throws ApisResourceAccessException, IOException, IdrepoDraftException {
+	public void apisResourceAccessExceptionTest()
+			throws ApisResourceAccessException, IOException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		ApisResourceAccessException apisResourceAccessException = Mockito.mock(ApisResourceAccessException.class);
 		HttpServerErrorException httpServerErrorException = new HttpServerErrorException(
@@ -1379,7 +1389,8 @@ public class UinGeneratorStageTest {
 
 
 	@Test
-	public void clientErrorExceptionTest() throws ApisResourceAccessException, IOException, IdrepoDraftException {
+	public void clientErrorExceptionTest()
+			throws ApisResourceAccessException, IOException, IdrepoDraftException, IdrepoDraftReprocessableException {
 
 		ApisResourceAccessException apisResourceAccessException = Mockito.mock(ApisResourceAccessException.class);
 		HttpClientErrorException httpErrorErrorException = new HttpClientErrorException(
@@ -1423,7 +1434,8 @@ public class UinGeneratorStageTest {
 
 	@Test
 	@Ignore
-	public void testApiResourceException() throws ApisResourceAccessException, IOException, IdrepoDraftException {
+	public void testApiResourceException()
+			throws ApisResourceAccessException, IOException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		MessageDTO messageDTO = new MessageDTO();
 		messageDTO.setRid("10031100110005020190313110030");
 		messageDTO.setReg_type(RegistrationType.valueOf("DEACTIVATED").name());
@@ -1451,7 +1463,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void testApisResourceAccessExceptionPostApi() throws ApisResourceAccessException, IOException, IdrepoDraftException {
+	public void testApisResourceAccessExceptionPostApi()
+			throws ApisResourceAccessException, IOException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		ApisResourceAccessException exc = new ApisResourceAccessException();
 		MessageDTO messageDTO = new MessageDTO();
 		messageDTO.setRid("27847657360002520181210094052");
@@ -1585,7 +1598,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void updateTestSuccess() throws ApisResourceAccessException, IOException, JsonProcessingException, PacketManagerException, JSONException, IdrepoDraftException {
+	public void updateTestSuccess() throws ApisResourceAccessException, IOException, JsonProcessingException,
+			PacketManagerException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -1980,7 +1994,8 @@ public class UinGeneratorStageTest {
 	@Test
 	public void deactivateTestWithNullResponseDTOBeforeDeactivate() throws ApisResourceAccessException,
 			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+			IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2029,7 +2044,8 @@ public class UinGeneratorStageTest {
 	@Test
 	public void deactivateTesApiResourceClientException() throws ApisResourceAccessException,
 			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+			IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2079,7 +2095,8 @@ public class UinGeneratorStageTest {
 	@Test
 	public void deactivateTesApiResourceServerException() throws ApisResourceAccessException,
 			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+			IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2127,7 +2144,8 @@ public class UinGeneratorStageTest {
 	@Test
 	public void deactivateTesApiResourceException() throws ApisResourceAccessException,
 			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+			IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2175,7 +2193,8 @@ public class UinGeneratorStageTest {
 	@Test
 	public void deactivateTestAlreadyDeactivated() throws ApisResourceAccessException,
 			PacketManagerException,
-			IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+			IOException, JsonProcessingException, JSONException, IdrepoDraftException,
+			IdrepoDraftReprocessableException {
 		Map<String, String> fieldMap = new HashMap<>();
 		fieldMap.put("UIN", "123456");
 		fieldMap.put("name", "mono");
@@ -2224,7 +2243,8 @@ public class UinGeneratorStageTest {
 	}
 
 	@Test
-	public void testUinAlreadyDeactivated() throws ApisResourceAccessException, PacketManagerException, IOException, JsonProcessingException, JSONException, IdrepoDraftException {
+	public void testUinAlreadyDeactivated() throws ApisResourceAccessException, PacketManagerException, IOException,
+			JsonProcessingException, JSONException, IdrepoDraftException, IdrepoDraftReprocessableException {
 		Map<String, String> fieldsMap = new HashMap<>();
 		fieldsMap.put("UIN", "123456");
 		fieldsMap.put("name", "mono");
@@ -2394,5 +2414,65 @@ public class UinGeneratorStageTest {
 		assertTrue(result.getInternalError());
 		assertTrue(result.getIsValid());
 	}
-	
+
+	@Test
+	public void testUinGenerationIDRepoDraftReprocessableException() throws Exception {
+		MessageDTO messageDTO = new MessageDTO();
+		messageDTO.setRid("27847657360002520181210094052");
+		messageDTO.setReg_type(RegistrationType.NEW.name());
+
+		when(registrationStatusMapperUtil
+				.getStatusCode(RegistrationExceptionTypeCode.IDREPO_DRAFT_REPROCESSABLE_EXCEPTION))
+				.thenReturn("REPROCESS");
+		when(idrepoDraftService.idrepoUpdateDraft(anyString(), any(), any()))
+				.thenThrow(IdrepoDraftReprocessableException.class);
+		when(utility.getRegistrationProcessorMappingJson(MappingJsonConstants.IDENTITY)).thenReturn(identityObj);
+		when(utility.getRegistrationProcessorMappingJson(MappingJsonConstants.DOCUMENT)).thenReturn(documentObj);
+
+		MessageDTO result = uinGeneratorStage.process(messageDTO);
+		assertTrue(result.getInternalError());
+		assertTrue(result.getIsValid());
+	}
+
+	@Test
+	public void testUinGenerationSuccessWithEmptyName() throws Exception {
+		ReflectionTestUtils.setField(uinGeneratorStage,"trimWhitespaces",true);
+		Map<String, String> fieldMap = new HashMap<>();
+		fieldMap.put("firstName","[ {\n" +
+				"  \"language\" : \"eng\",\n" +
+				"  \"value\" : \" \"\n" +
+				"} ]");
+		fieldMap.put("email", "mono@mono.com");
+		fieldMap.put("phone", "23456");
+		fieldMap.put("dob", "11/11/2011");
+		when(packetManagerService.getFields(any(),any(),any(),any())).thenReturn(fieldMap);
+		ArgumentCaptor<io.mosip.registration.processor.packet.manager.dto.IdRequestDto> argumentCaptor = ArgumentCaptor.forClass(IdRequestDto.class);
+
+		MessageDTO messageDTO = new MessageDTO();
+		messageDTO.setRid("27847657360002520181210094052");
+		messageDTO.setReg_type(RegistrationType.NEW.name());
+
+		IdResponseDTO idResponseDTO = new IdResponseDTO();
+		ResponseDTO responseDTO = new ResponseDTO();
+		responseDTO.setStatus("ACTIVATED");
+		idResponseDTO.setErrors(null);
+		idResponseDTO.setId("mosip.id.update");
+		idResponseDTO.setResponse(responseDTO);
+		idResponseDTO.setResponsetime("2019-01-17T06:29:01.940Z");
+		idResponseDTO.setVersion("1.0");
+
+		when(idrepoDraftService.idrepoUpdateDraft(anyString(), any(), any())).thenReturn(idResponseDTO);
+		when(utility.getRegistrationProcessorMappingJson(MappingJsonConstants.IDENTITY)).thenReturn(identityObj);
+		when(utility.getRegistrationProcessorMappingJson(MappingJsonConstants.DOCUMENT)).thenReturn(documentObj);
+
+		MessageDTO result = uinGeneratorStage.process(messageDTO);
+		verify(idrepoDraftService).idrepoUpdateDraft(any(), any(), argumentCaptor.capture());
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonobject=objectMapper.writeValueAsString(argumentCaptor.getAllValues().get(0).getRequest().getIdentity());
+		JsonNode jsonNode=objectMapper.readTree(jsonobject);
+
+		assertEquals("",jsonNode.get("firstName").asText());
+		assertFalse(result.getInternalError());
+		assertTrue(result.getIsValid());
+	}
 }
