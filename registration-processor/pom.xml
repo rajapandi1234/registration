@@ -60,12 +60,12 @@
 		<apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
 
 		<!-- Swagger -->
-		<swagger.version>2.9.2</swagger.version>
+		<swagger.version>2.10.0</swagger.version>
 
 		<!-- Data Access -->
 		<eclipselink.version>2.5.0</eclipselink.version>
 		<mysql.connector.version>5.1.46</mysql.connector.version>
-		<h2.version>1.4.195</h2.version>
+		<h2.version>2.3.232</h2.version>
 		<postgresql.version>42.2.2</postgresql.version>
 
 		<!-- Lombok -->
@@ -101,8 +101,8 @@
 		<s3mock.version>0.2.4</s3mock.version>
 
 		<!-- Vert.x -->
-		<vertx.version>3.9.13</vertx.version>
-		<camel.vertx.version>2.23.0</camel.vertx.version>
+		<vertx.version>4.4.9</vertx.version>
+		<camel.vertx.version>4.4.0</camel.vertx.version>
 		<hazelcast.kubernetes.version>1.0.0</hazelcast.kubernetes.version>
 		<hazelcast.version>3.9.4</hazelcast.version>
 		<!-- json-simple -->
