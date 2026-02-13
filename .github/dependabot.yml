@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "maven"
-    directory: "/registration-processor" 
+    directory: "/registration-processor/mosip-stage-executor" 
     schedule:
       interval: "daily"
     target-branch: "develop"
